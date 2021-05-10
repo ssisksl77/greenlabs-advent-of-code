@@ -1,20 +1,20 @@
 (ns greenlabs.advent-of-code.day01 
   (:require [clojure.java.io :as io]
             [clojure.string :as str]))
+
+(defn read-input [path]
+  (->> path 
+       slurp
+       str/split-lines
+       (map read-string)))
+
 ;; part one
-(->> (slurp (io/resource "day01.txt"))
-    str/split-lines
-     (map read-string)
+(->> (io/resource "day01.txt")
+     read-input
      (apply +))
 
 ;; part two
-(def input (->> "day01.txt"
-                io/resource
-                slurp
-                str/split-lines
-                (map read-string)))
-
-(loop [i (cycle input)
+(loop [i (cycle (read-input (io/resource "day01.txt")))
        acc 0
        s #{0}]
   (if (seq i)
