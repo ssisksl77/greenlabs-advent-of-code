@@ -24,6 +24,8 @@ ababab contains three a and three b, but it only counts once."))
                (vals (frequencies "bababc"))))
   (parse demo-input))
 
+;; 2번 겹치는 문자, 3번 겹치는 문자 횟수를 count하라
+;; 같은 문자에서 2번 겹치는 문자가 여러번 나와도 count는 하나이다.
 (defn part-one [input]
   (let [init-hash {2 0 3 0}
         {threes 3 twos 2} (reduce (fn [acc e]
@@ -69,3 +71,4 @@ ababab contains three a and three b, but it only counts once."))
                          ))))
 
   (str/split-lines (slurp (io/resource "day02.txt"))))
+c
