@@ -55,22 +55,13 @@ ababab contains three a and three b, but it only counts once."))
 (defn part-two2 [strs]
   (let [len  (count (first strs))
         strs (for-i (fn [i] (map #(remove-index % i) strs))
-                len)]
-    (first (keep (partial (util/dup (fn [_ x] x))) strs))))
-
-(let [strs '("ABCDE" "abcde")]
-  (for-i (fn [i] (map #(remove-index % i) strs))
-         (count (first strs))))
+                    len)]
+    (first (keep #(util/dup-reduce %) strs))
+    #_(keep (partial util/dup (fn [_ x] x)) strs)))
 
 ;; ["" "" "" ...] -> 겹치는 문자가 나오면 리턴
 ;; day01.clj도 비슷한게 있었는데? 공통 함수로 리팩토링 해보기
 (part-two2 (util/slurp-resource-lines "day02.txt"))
-
-
-
-
-
-
 
 (comment
   (defn part-two [strs]
