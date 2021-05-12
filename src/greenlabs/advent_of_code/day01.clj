@@ -1,6 +1,7 @@
 (ns greenlabs.advent-of-code.day01
   (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [greenlabs.advent-of-code.util :as util]))
 
 (defn read-input [path]
   (let [lines (-> path slurp str/split-lines)]
@@ -21,15 +22,19 @@
 
 ;; part two
 
-(defn part-two [ints]
-  (loop [xs (cycle ints)
-         acc 0
-         seen? #{0}]
-    (if (seq xs)
-      (let [acc' (+ acc (first xs))]
-        (if (seen? acc')
-          acc'
-          (recur (next xs) acc' (conj seen? acc'))))
-      nil)))
+(def part-two-dup (util/dup (fn [acc x] (+ acc x))))
+(part-two-dup (cycle (read-input (io/resource "day01.txt"))))
 
-(part-two (read-input (io/resource "day01.txt")))
+(comment
+  (defn part-two [ints]
+    (loop [xs (cycle ints)
+           acc 0
+           seen? #{0}]
+      (if (seq xs)
+        (let [acc' (+ acc (first xs))]
+          (if (seen? acc')
+            acc'
+            (recur (next xs) acc' (conj seen? acc'))))
+        nil)))
+
+  (part-two (read-input (io/resource "day01.txt"))))
