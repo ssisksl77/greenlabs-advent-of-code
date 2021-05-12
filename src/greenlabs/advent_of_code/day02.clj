@@ -54,10 +54,10 @@ ababab contains three a and three b, but it only counts once."))
 ;; 2. 겹치는 문자를 확인한다.
 (defn part-two2 [strs]
   (let [len  (count (first strs))
-        strs (for-i (fn [i] (map #(remove-index % i) strs))
+        strs (for-i (fn [i]
+                      (map #(remove-index % i) strs))
                     len)]
-    (first (keep #(util/dup-reduce %) strs))
-    #_(keep (partial util/dup (fn [_ x] x)) strs)))
+    (keep identity (map #(util/dup-one2 %) strs))))
 
 ;; ["" "" "" ...] -> 겹치는 문자가 나오면 리턴
 ;; day01.clj도 비슷한게 있었는데? 공통 함수로 리팩토링 해보기

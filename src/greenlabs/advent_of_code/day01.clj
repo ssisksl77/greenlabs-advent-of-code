@@ -21,7 +21,9 @@
 ; Print (Js.log)
 
 ;; part two
-(util/dup-reduce
+(util/dup-one
+ (reductions + (cycle (read-input (io/resource "day01.txt")))))
+(util/dup-one2
  (reductions + (cycle (read-input (io/resource "day01.txt")))))
 
 (comment

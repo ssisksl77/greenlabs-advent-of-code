@@ -18,7 +18,30 @@
           (recur (next xs) acc' (conj seen? acc')))))))
 
 
-(defn dup-reduce [col]
+(defn dup-gen [stop? end col]
+  (->> col
+       (reduce (fn [acc e]
+                 (if (stop? acc e)
+                   (end acc)
+                   (if ((:seen? acc) e)
+                     (update-in acc [:dup] conj e)
+                     (update-in acc [:seen?] conj e)))
+                 )
+               {:seen? #{} :dup #{}})))
+
+(def dup-one2 (comp first
+                    :dup
+                    (partial dup-gen
+                             (fn [acc e] (seq (:dup acc)))
+                             reduced)))
+
+
+(def dup-all2 (comp :dup
+                    (partial dup-gen
+                             (constantly nil)
+                             identity)))
+
+(defn dup-one [col]
   (->> col
        (reduce (fn [acc e]
                  (if (seq (:dup acc))
@@ -30,4 +53,15 @@
                {:seen? #{} :dup #{}})
        :dup
        first
+       ))
+
+(defn dup-all [col]
+  (->> col
+       (reduce (fn [acc e]
+                 (if ((:seen? acc) e)
+                   (update-in acc [:dup] conj e)
+                   (update-in acc [:seen?] conj e))
+                 )
+               {:seen? #{} :dup #{}})
+       :dup
        ))
