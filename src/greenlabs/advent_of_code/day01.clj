@@ -21,9 +21,15 @@
 ; Print (Js.log)
 
 ;; part two
+(def part-two-dup (partial (util/dup (fn [acc x] (+ acc x)))))
 
-(def part-two-dup (util/dup (fn [acc x] (+ acc x))))
 (part-two-dup (cycle (read-input (io/resource "day01.txt"))))
+
+
+
+
+
+
 
 (comment
   (defn part-two [ints]
