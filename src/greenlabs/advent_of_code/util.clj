@@ -6,3 +6,14 @@
   (let [lines (slurp (io/resource path))]
     (str/split-lines lines)))
 
+
+(defn dup [f]
+  (fn [col]
+    (loop [xs col
+           acc 0
+           seen? #{}]
+      (if (seq xs)
+        (let [acc' (f acc (first xs))]
+          (if (seen? acc')
+            acc'
+            (recur (next xs) acc' (conj seen? acc'))))))))
