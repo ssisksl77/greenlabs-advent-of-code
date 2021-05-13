@@ -23,19 +23,6 @@
 ;; part two
 (util/dup-one
  (reductions + (cycle (read-input (io/resource "day01.txt")))))
-(util/dup-one2
+
+#_(util/dup-one2
  (reductions + (cycle (read-input (io/resource "day01.txt")))))
-
-(comment
-  (defn part-two [ints]
-    (loop [xs (cycle ints)
-           acc 0
-           seen? #{0}]
-      (if (seq xs)
-        (let [acc' (+ acc (first xs))]
-          (if (seen? acc')
-            acc'
-            (recur (next xs) acc' (conj seen? acc'))))
-        nil)))
-
-  (part-two (read-input (io/resource "day01.txt"))))
