@@ -3,14 +3,6 @@
             [clojure.java.io :as io]
             [greenlabs.advent-of-code.util :as util]))
 
-(def demo-rawdata (str/split-lines "abcdef contains no letters that appear exactly two or three times.
-bababc contains two a and three b, so it counts for both.
-abbcde contains two b, but no letter appears exactly three times.
-abcccd contains three c, but no letter appears exactly two times.
-aabcdd contains two a and two d, but it only counts once.
-abcdee contains two e.
-ababab contains three a and three b, but it only counts once."))
-
 ;; 2번 겹치는 문자, 3번 겹치는 문자 횟수를 count하라
 ;; 같은 문자에서 2번 겹치는 문자가 여러번 나와도 count는 하나이다.
 (defn part-one [input]
@@ -42,13 +34,6 @@ ababab contains three a and three b, but it only counts once."))
   (for [i (range len)]
     (f i)))
 
-(defn filter-frequencies [pred col]
-  (->> col
-       frequencies
-       (filter #(pred %))))
-
-(def filter-frequencies-two
-  (partial filter-frequencies #(= (second %) 2)))
 
 ;; 1. 문자열을 한번씩 제거를 해본다.
 ;; 2. 겹치는 문자를 확인한다.
@@ -60,14 +45,29 @@ ababab contains three a and three b, but it only counts once."))
     (keep identity (map #(util/dup-one2 %) strs))))
 
 ;; ["" "" "" ...] -> 겹치는 문자가 나오면 리턴
-;; day01.clj도 비슷한게 있었는데? 공통 함수로 리팩토링 해보기
+;;
+;;  day01.clj도 비슷한게 있었는데? 공통 함수로 리팩토링 해보기
 (part-two2 (util/slurp-resource-lines "day02.txt"))
 
+
+
+
+
+
+
+
 (comment
+  (def demo-rawdata (str/split-lines "abcdef contains no letters that appear exactly two or three times.
+bababc contains two a and three b, so it counts for both.
+abbcde contains two b, but no letter appears exactly three times.
+abcccd contains three c, but no letter appears exactly two times.
+aabcdd contains two a and two d, but it only counts once.
+abcdee contains two e.
+ababab contains three a and three b, but it only counts once."))
+
   (defn part-two [strs]
     (let [len (count (first strs))]
       (first (flatten (for [i (range len)]
                         (->> (map #(remove-index % i) strs)
-                             filter-frequencies-two
-                             ))))))
+                             filter-frequencies-two))))))
   (part-two (util/slurp-resource-lines "day02.txt")))
