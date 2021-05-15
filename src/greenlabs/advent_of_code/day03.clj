@@ -1,8 +1,7 @@
 (ns greenlabs.advent-of-code.day03
   (:require [clojure.string :as str]
             [clojure.set :as set]
-            [greenlabs.advent-of-code.util :as util]
-            [clojure.java.io :as io]))
+            [greenlabs.advent-of-code.util :as util]))
 
 (def sample-rawdata (str/split-lines "#1 @ 1,3: 4x4
 #2 @ 3,1: 4x4
@@ -51,6 +50,7 @@
 (count (part-one (parse2 (util/slurp-resource-lines "day03.txt"))))
 ;; => 124850
 
+;; 첫번째 변환 시도.
 (defn part-one-reduce [claims]
   (let [claims' (mapcat :square claims)
         reduce-square (fn [acc i]
@@ -67,8 +67,7 @@
 
 (part-one-reduce (parse2 sample-rawdata))
 
-
-
+;; 두번째 변환 시도.
 (defn part-one-reduce2 [claims]
   (let [claims' (mapcat :square claims)]
     (util/dup-all2 claims')
