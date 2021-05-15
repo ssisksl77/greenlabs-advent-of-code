@@ -21,8 +21,10 @@
 ; Print (Js.log)
 
 ;; part two
-(util/dup-one
- (reductions + (cycle (read-input (io/resource "day01.txt")))))
+(let [data (read-input (io/resource "day01.txt"))]
+  (util/dup-one
+    (reductions + (cycle data))))
+
 
 #_(util/dup-one2
  (reductions + (cycle (read-input (io/resource "day01.txt")))))
