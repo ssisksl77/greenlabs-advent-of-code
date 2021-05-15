@@ -29,10 +29,10 @@
 ;;         한번 필터링을 해야한다.
 (defn part-one2 [input]
   (let [{twos 2 threes 3} (->> input
-                        (map frequencies)
-                        (map #(set/map-invert %))
-                        (map #(select-keys % [2 3]))
-                        (apply merge-with (fn [x _] (inc x)) {2 0 3 0}))]
+                               (map frequencies)
+                               (map #(set/map-invert %))
+                               (map #(select-keys % [2 3]))
+                               (apply merge-with (fn [x _] (inc x)) {2 0 3 0}))]
     (* twos threes)))
 
 (part-one2 (util/slurp-resource-lines "day02.txt"))
@@ -55,7 +55,15 @@
         strs (for-i (fn [i]
                       (map #(remove-index % i) strs))
                     len)]
-    (keep identity (map #(util/dup-one %) strs))))
+    (keep #(util/dup-one %) strs)))
+
+
+;; map(f) => 
+;; map(g) => g: 'a => boolean
+;; filter(x => x)
+;; count 
+
+;; filter(g') => g': 'a => 'a
 
 ;; ["" "" "" ...] -> 겹치는 문자가 나오면 리턴
 ;;
@@ -67,9 +75,10 @@
   (let [strs (map-indexed (fn [idx _]
                             (map #(remove-index % idx) strs))
                           (first strs))]
-    (keep identity (map #(util/dup-one %) strs))))
+    (keep #(util/dup-one %) strs)))
 
 (part-two3 (util/slurp-resource-lines "day02.txt"))
 
 (= (part-two2 (util/slurp-resource-lines "day02.txt"))
    (part-two3 (util/slurp-resource-lines "day02.txt")))
+
