@@ -6,7 +6,7 @@
   (let [lines (slurp (io/resource path))]
     (str/split-lines lines)))
 
-
+;; reduce
 (defn dup [f col]
   (loop [xs col
          acc 0
@@ -24,7 +24,7 @@
                  (if (stop? acc e)
                    (end acc)
                    (if ((:seen? acc) e)
-                     (update-in acc [:dup] conj e)
+                     (update acc :dup conj e)
                      (update-in acc [:seen?] conj e)))
                  )
                {:seen? #{} :dup #{}})))
