@@ -3,7 +3,7 @@
             [clojure.java.io :as io]))
 
 ;; 무한행렬문제가 아님.
-;; 한 칸이 있고, 그 칸에서 뻗어나갔으면 무한이다.
+;; 하나의 사각칸이 있고, 그 칸에서 뻗어나갔으면 무한이다.
 ;; 그럼 일단 무한이 아닌 녀석만 찾으면 된다.
 ;; 어떻게 찾을까?
 ;; 두 점이 있으면 그 점 사이에는 finite이다.
@@ -112,6 +112,7 @@
 5, 5
 8, 9"))
 (def real-input (parse (slurp (io/resource "day06.txt"))))
+
 ;; part one
 (defn part-one [input]
   (let [cmd (->> input
