@@ -1,58 +1,6 @@
 (ns greenlabs.advent-of-code.day06
   (:require [clojure.string :as str]
-            [greenlabs.advent-of-code.util :as util]
             [clojure.java.io :as io]))
-
-;; start 10:30
-;; end 11:00
-;; start 12:45
-(def demo-input (->> (str/split "1, 1
-1, 6
-8, 3
-3, 4
-5, 5
-8, 9"
-                                #"\n|\, ")
-                     (map #(Integer/parseInt %))
-                     (partition 2)))
-
-
-(defn to-map [input]
-  (map-indexed
-   (fn [i [x y]] {:id i :x x :y y})
-   input))
-
-(to-map demo-input)
-
-(defn manhattan-distance [[p1-x p1-y] [p2-x p2-y]]
-  (+ (Math/abs (- p1-x p2-x)) (Math/abs (- p1-y p2-y))))
-
-
-(manhattan-distance [1 1] [3 3])
-
-(defn scattering [x y]
-  (let [directions [[-1 -1] [0 -1] [1 -1]
-                    [1 0] [1 1]
-                    [0 1] [-1 1]
-                    [-1 0]]]
-    (map (fn [[dx dy]] [(+ x dx) (+ y dy)])
-         directions)))
-
-(scattering 1 1)
-
-
-;; 왼쪽으로 퍼지기 - 갖고있는 가장 왼쪽 것들을 다 (-1, 0)
-;; 오른쪽으로 - 갖고 있는 오른쪽 것들을 다 (1, 0)
-;; 위 - 모두 (0,1)
-;; 아래 - 모두 (0,-1)
-;; 되려나...
-;; . 이 있으면 그 이상 퍼질 수 없음. x라고 표시를 하던가 뭔가 해야 할듯
-
-(defn scattering' [star]
-  (partition-by first (sort star)))
-
-(scattering' (scattering 1 1))
-
 
 ;; 무한행렬문제가 아님.
 ;; 한 칸이 있고, 그 칸에서 뻗어나갔으면 무한이다.
@@ -66,27 +14,19 @@
 ;; 내가 한면이 끝에 닿으면 infinite이다.
 ;; 한면에 하나도 닿지 않으면 finite이다.
 ;; 이렇게 하려면 결국 별을 키워야겠다.
-demo-input
 
 ;; 아니다 각 포인트마다 누가 제일 가까운지 확인하고
-;; 테두리에 무낮가 있는 녀석은 infinite이라고 하고
+;; 테두리에 문자가 있는 녀석은 infinite이라고 하고
 ;; 아니면 map으로 카운트한다.
 ;; 제일숫자가 큰 녀석을 리턴.
-(def demo-input (->> (str/split "1, 1
-1, 6
-8, 3
-3, 4
-5, 5
-8, 9"
-                                #"\n|\, ")
-                     (map #(Integer/parseInt %))
-                     (partition 2)))
-
-
-(defn manhattan-distance [[p1-x p1-y] [p2-x p2-y]]
+(defn manhattan-distance 
+  "두 xy-좌표의 맨하탄거리를 리턴합니다."
+  [[p1-x p1-y] [p2-x p2-y]]
   (+ (Math/abs (- p1-x p2-x)) (Math/abs (- p1-y p2-y))))
 
-(defn make-square [input]
+(defn make-square 
+  "input좌표들 중 최대/최소 x,y를 이용하여 사각형 범위를 리턴합니다."
+  [input]
   (let [max-point (reduce (fn [acc e]
                             [(inc (max (first acc) (first e)))
                              (inc (max (second acc) (second e)))])
@@ -96,18 +36,9 @@ demo-input
           y (range (second max-point))]
       [x y])))
 
-(let [max-point (reduce (fn [acc e]
-                          [(max (first acc) (first e))
-                           (max (second acc) (second e))])
-                        [0 0]
-                        demo-input)]
-  max-point)
-
-demo-input
-(make-square demo-input)
-demo-input
-
-(defn make-manhattan-distances [input]
+(defn make-manhattan-distances 
+  "각 별을 기준으로 맨하탄거리를 모두 계산하여 리턴합니다."
+  [input]
   (let [square (make-square input)]
     (flatten (map-indexed (fn [idx-x A]
                             (map (fn [s] {:id idx-x
@@ -115,16 +46,11 @@ demo-input
                                           :dt (manhattan-distance (vec A) s)})
                                  square))
                           input))))
-#_(def manhattan-distances' (let [square (make-square demo-input)]
-                              (flatten (map-indexed (fn [idx-x A]
-                                                      (map (fn [s] {:id idx-x
-                                                                    :p  s
-                                                                    :dt (manhattan-distance (vec A) s)})
-                                                           square))
-                                                    demo-input))))
 
-
-(defn calculate-manhattan-distances [manhattan-distances]
+(defn calculate-manhattan-distances 
+  "각 별을 기준으로 계산된 맨하탄거리들을 비교하여 :dt 숫자가 작은 별로로 대체됩니다.
+   동일한 경우 별의 이름은 nil로 대체합니다."
+  [manhattan-distances]
   (reduce (fn [acc e]
             (if-let [dt (get-in acc [(:p e) :dt])]
               (cond
@@ -135,22 +61,13 @@ demo-input
           {}
           manhattan-distances))
 
-
-#_(def a (reduce (fn [acc e]
-                   (if-let [dt (get-in acc [(:p e) :dt])]
-                     (cond
-                       (< (:dt e) dt) (assoc acc (:p e) {:dt (:dt e) :id (:id e)})
-                       (= (:dt e) dt) (assoc acc (:p e) {:dt (:dt e) :id nil})
-                       :default acc)
-                     (assoc acc (:p e) {:id (:id e) :dt (:dt e)})))
-                 {}
-                 manhattan-distances'))
-
 ;; 0,0 ... 0, max-y
 ;; 0,0 ... max-x 0
 ;; max-x,0 ... max-x, max-y
 ;; 0, max-y ... max-x, max-y
-(defn infinite-pts [max-x max-y]
+(defn infinite-pts 
+  "무한으로 뻗어나가는 별을 구하기 위해 (0,0)-(max-x, max-y) 사각형의 테두리 좌표들을 리턴합니다."
+  [max-x max-y]
   (let [x-range (range max-x)
         y-range (range max-y)
         max-x-idx  (dec max-x)
@@ -161,36 +78,18 @@ demo-input
                          y-range))
          set)))
 
-
-
-(defn part-one [input cmd]
-  (let [max-point (reduce (fn [acc e]
-                            [(inc (max (first acc) (first e)))
-                             (inc (max (second acc) (second e)))])
-                          [0 0]
-                          input)
-        infinite-pts-set (infinite-pts (first max-point) (second max-point))
-      ;; infinite인 녀석들을 셋으로 가져옴.
-        filtered (set (keep (fn [[k v]] (when (infinite-pts-set k)
-                                          (:id v)))
-                            cmd))
-        b (filter (fn [[_ v]] (let [id (:id v)]
-                                (when-not (or (nil? id) (filtered id) (= -1 (:dt v)))
-
-                                  v))) cmd)]
-    (->> (group-by (fn [[_ v]] (:id v))
-                   b)
-         (map (fn [[_ v]] (count v)))
-         (apply max))))
-
-
-(defn parse [input]
+(defn parse
+  "문자열을 xy쌍 배열리스트로 변형하려 리턴합니다."
+  [input]
   (let [input' (str/split input #"\n|\, ")]
     (->> input'
          (map #(Integer/parseInt %))
          (partition 2))))
 
-(defn find-safe-pts [input cmd]
+(defn find-safe-pts 
+  "무한으로 뻗어나가는 별을 제거합니다.
+   별 단위로 그룹을 만든 이후 가장 큰 숫자를 리턴합니다."
+  [input cmd]
   (let [max-point (reduce (fn [acc e]
                             [(inc (max (first acc) (first e)))
                              (inc (max (second acc) (second e)))])
@@ -198,45 +97,34 @@ demo-input
                           input)
         infinite-pts-set (infinite-pts (first max-point) (second max-point))
       ;; infinite인 녀석들을 셋으로 가져옴.
-        filtered (set (keep (fn [[k v]] (when (infinite-pts-set k)
+        infinite-stars-set (set (keep (fn [[k v]] (when (infinite-pts-set k)
                                           (:id v)))
                             cmd))
-        b (filter (fn [[_ v]] (let [id (:id v)]
-                                (when-not (or (nil? id) (filtered id) (= -1 (:dt v)))
+        safe-stars (filter (fn [[_ v]] (let [id (:id v)]
+                                         (when-not (or (nil? id) (infinite-stars-set id) (= -1 (:dt v)))
+                                           v))) cmd)]
+    safe-stars))
 
-                                  v))) cmd)]
-    b))
-
-
-;; part one
-#_(let [p (parse "1, 1
+(def demo-input (parse "1, 1
 1, 6
 8, 3
 3, 4
 5, 5
-8, 9")
-        mmd (make-manhattan-distances p)
-        cmd (calculate-manhattan-distances mmd)]
-    (part-one p cmd))
+8, 9"))
+(def real-input (parse (slurp (io/resource "day06.txt"))))
+;; part one
+(defn part-one [input]
+  (let [cmd (->> input
+                 make-manhattan-distances
+                 calculate-manhattan-distances)
+        safe-pts (find-safe-pts input cmd)]
+    (->> (group-by (fn [[_ v]] (:id v))
+                   safe-pts)
+         (map (fn [[_ v]] (count v)))
+         (apply max))))
 
-(defn neighbors [[x y]]
-  (let [directions [[-1 0] [1 0] [0 -1] [0 1]]]
-    (map (fn [[x' y']] [(+ x x') (+ y y')])
-         directions)))
-
-(defn part-two [safe-pts]
-  (let [safe-pts-set (set safe-pts)]
-    (prn [(count safe-pts) safe-pts-set])
-    (loop [safe-pt safe-pts
-           res #{}]
-      #_(prn safe-pt)
-      (if-let [valid-pt (safe-pts-set (first safe-pt))]
-        (do
-          #_(prn valid-pt)
-          (recur (concat (rest safe-pt) (neighbors valid-pt))
-                 (conj res valid-pt)))
-        res))))
-
+(part-one demo-input)
+(part-one real-input)  ;; 2342
 ;; part two
 (defn part-two [input]
   (let [p input
@@ -250,89 +138,10 @@ demo-input
             {}
             mmd)))
 
+(count (filter (fn [[_ v]] (< v 32))
+               (part-two demo-input)))
 
-#_(def aa (let [safe-cnt 32
-              p (parse "1, 1
-1, 6
-8, 3
-3, 4
-5, 5
-8, 9")
-              mmd (make-manhattan-distances p)
-              cmd (calculate-manhattan-distances mmd)]
-          #_(spit "demo.txt" (str/split-lines (apply str mmd)))
-          (reduce (fn [acc e]
-                    (let [k (:p e)
-                          dt (get e :dt 0)]
-                      #_(prn [acc k dt])
-                      (if (acc k)
-                        (update acc k + dt)
-                        (assoc acc k dt))))
-                  {}
-                  mmd)))
-
-(count (filter (fn [[k v]] (< v 32))
-               (part-two (parse "1, 1
-1, 6
-8, 3
-3, 4
-5, 5
-8, 9"))))
-
-(part-two
- (parse (slurp (io/resource "day06.txt"))))
-
+;; part two - manhattan distance를 전부 더한 다음에 10000 밑인 점들을 찾는다.
 (count (filter (fn [[_ v]] (< v 10000))
                (part-two 
-                (parse (slurp (io/resource "day06.txt"))))))
-
-(def safe-pts (let [safe-cnt 1000
-                    parsed-input
-                    (parse (slurp (io/resource "day06.txt")))
-                    #_(parse "1, 1
-1, 6
-8, 3
-3, 4
-5, 5
-8, 9")
-                    mmd (make-manhattan-distances parsed-input)
-                    cmd (calculate-manhattan-distances mmd)
-                    safe-pts (find-safe-pts parsed-input cmd)]
-                (->> (for [safe-pt (map first safe-pts)]
-                       (->> (apply + (map #(manhattan-distance safe-pt %)
-                                          parsed-input))
-                            (vector safe-pt)))
-                     (filter (fn [[_ dt]]
-                               (< dt safe-cnt)))
-                     (map first)
-                     part-two)))
-safe-pts
-
-(parse (slurp (io/resource "day06.txt")))
-;; loop 
-;; 1. is-safe-pts?에 걸리는 녀석이 있다면?
-;; 1-1. 그 녀석의 neighbor를 추가해서 순회를 recur로 부른다.
-;; 2. is-safe-pts?에 걸리는 녀석이 없다면?
-;; 2-1. 현재 누적된 셋을 리턴한다.
-
-(map (fn [safe-pt]
-       (loop [pt safe-pt
-              res #{}]
-         pt))
-
-     safe-pts)
-
-
-(defn find-neighbors [safe-pt-dts]
-  (let [safe-pts (map first safe-pt-dts)
-        safe-pts-set (set safe-pts)
-        neighbors-pt [[-1 0] [1 0] [0 -1] [0 1]]]
-    (loop [safe-pt (safe-pt)]
-      (map (fn [[x y]] [(+ (first safe-pt) x)
-                        (+ (second safe-pt) y)])
-           neighbors-pt))))
-
-#_(for [safe-pt  safe-pts]
-    (->> (map (fn [pi]
-                (conj safe-pt :star-dts  (manhattan-distance (first safe-pt) pi)))
-              parsed-input)))
+                (parse (slurp (io/resource "day06.txt"))))))  ;; 44302
