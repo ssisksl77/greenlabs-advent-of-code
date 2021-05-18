@@ -39,7 +39,7 @@
          dup #{}
          square #{}]
     (if-let [square-new (:square claim)]
-      (let [square'(set/union square square-new)
+      (let [square' (set/union square square-new)
             square-dup (set/intersection square square-new)
             dup' (set/union dup square-dup)]
         (recur cs dup' square'))
@@ -54,24 +54,22 @@
 (defn part-one-reduce [claims]
   (let [claims' (mapcat :square claims)
         reduce-square (fn [acc i]
-              (let [seen? (:seen? acc)]
-                (if (seen? i)
-                  (update-in acc [:dup] conj i)
-                  (update-in acc [:seen?] conj i))))
+                        (let [seen? (:seen? acc)]
+                          (if (seen? i)
+                            (update-in acc [:dup] conj i)
+                            (update-in acc [:seen?] conj i))))
         init {:seen? #{} :dup #{}}]
     (-> (reduce reduce-square
                 init
                 claims')
-        :dup)
-    ))
+        :dup)))
 
 (part-one-reduce (parse2 sample-rawdata))
 
 ;; 두번째 변환 시도.
 (defn part-one-reduce2 [claims]
   (let [claims' (mapcat :square claims)]
-    (util/dup-all2 claims')
-    ))
+    (util/dup-all2 claims')))
 
 (part-one-reduce2 (parse2 sample-rawdata))
 
