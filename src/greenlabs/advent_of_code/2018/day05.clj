@@ -1,4 +1,4 @@
-(ns greenlabs.advent-of-code.day05
+(ns greenlabs.advent-of-code.2018.day05
   (:require [clojure.java.io :as io]))
 
 " 엘프들은 수트사이즈를 줄이는데 애를 먹고 있다

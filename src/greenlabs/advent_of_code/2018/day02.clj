@@ -1,4 +1,4 @@
-(ns greenlabs.advent-of-code.day02
+(ns greenlabs.advent-of-code.2018.day02
   (:require [clojure.set :as set]
             [greenlabs.advent-of-code.util :as util]))
 

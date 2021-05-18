@@ -1,4 +1,4 @@
-(ns greenlabs.advent-of-code.day05-2
+(ns greenlabs.advent-of-code.2018.day05-2
   (:require [clojure.java.io :as io]))
 
 (defn is-same-unit?

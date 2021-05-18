@@ -1,4 +1,4 @@
-(ns greenlabs.advent-of-code.day01
+(ns greenlabs.advent-of-code.2018.day01
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [greenlabs.advent-of-code.util :as util]))
