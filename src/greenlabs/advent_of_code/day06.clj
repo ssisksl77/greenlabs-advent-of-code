@@ -40,7 +40,7 @@
   "각 별을 기준으로 맨하탄거리를 모두 계산하여 리턴합니다."
   [input]
   (let [square (make-square input)]
-    (flatten (map-indexed (fn [idx-x A]
+                            (flatten (map-indexed (fn [idx-x A]
                             (map (fn [s] {:id idx-x
                                           :p  s
                                           :dt (manhattan-distance (vec A) s)})
@@ -49,7 +49,13 @@
 
 (defn calculate-manhattan-distances 
   "각 별을 기준으로 계산된 맨하탄거리들을 비교하여 :dt 숫자가 작은 별로로 대체됩니다.
-   동일한 경우 별의 이름은 nil로 대체합니다."
+   동일한 경우 별의 이름은 nil로 대체합니다.
+   
+  :id  - ?
+  :p   - ?
+  :dt  - ?
+
+   "
   [manhattan-distances]
   (reduce (fn [acc e]
             (if-let [dt (get-in acc [(:p e) :dt])]
@@ -58,7 +64,7 @@
                 (= (:dt e) dt) (assoc acc (:p e) {:dt (:dt e) :id nil})
                 :default acc)
               (assoc acc (:p e) {:id (:id e) :dt (:dt e)})))
-          {}
+          (sorted-map)
           manhattan-distances))
 
 ;; 0,0 ... 0, max-y
@@ -145,4 +151,4 @@
 ;; part two - manhattan distance를 전부 더한 다음에 10000 밑인 점들을 찾는다.
 (count (filter (fn [[_ v]] (< v 10000))
                (part-two 
-                (parse (slurp (io/resource "day06.txt"))))))  ;; 44302
+                (parse (slurp (io/resource "day06.txt"))))))  ;; 44302                                              
