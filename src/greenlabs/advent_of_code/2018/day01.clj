@@ -4,7 +4,9 @@
             [greenlabs.advent-of-code.util :as util]))
 
 (defn read-input [path]
-  (let [lines (-> path slurp str/split-lines)]
+  (let [lines (-> path 
+                  slurp 
+                  str/split-lines)]
     (map read-string lines)))
 
 ;; part one
